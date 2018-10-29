@@ -81,7 +81,7 @@ app.post('/file_upload', function (req, res) {
 
     res.end('End.......');
 });
-
+//8888888888888888888888888888888888888888888888888888888888888888888
 
 function getCelebrityRecognition(imgName) {
     console.log("img name : " + imgName);
@@ -94,20 +94,38 @@ function getCelebrityRecognition(imgName) {
             Bytes: buffer
         }
     }
-    var count = 0;
 
-  
-        rekognition.recognizeCelebrities(params, function (err, data) {
-            console.log('in recog celeb function');
-            if (err) console.log(err, err.stack); // an error occurred
-           else {
-                    console.log(data); // successful response
-                    console.log(data.UnrecognizedFaces);
-                    console.log('-----------------------End--------------------------------');
-                }
+    rekognition.recognizeCelebrities(params, function (err, data) {
+        console.log('in recog celeb function');
+        if (err) { console.log(err, err.stack); } // an error occurred
+        else {
+            if (data.UnrecognizedFaces[0].Confidence != 0) {
+                sightEngineApi(imgName);
+            }
+            else {
+                console.log(data); // successful response
+                console.log('-----------------------End--------------------------------');
+            }
+        }
+    });
+}
 
-        });
-    
+function sightEngineApi(imgName) {
+    var sightengine = require('sightengine')("443708702", "68VVA7mhbtZ8w7uYVwCU");
+
+    sightengine.check(['celebrities']).set_file(imgName).then(function (result) {
+        // read the output (result)
+        console.log(result);
+        console.log("features   : " + result.faces[0].features);
+        console.log("celebrity name : " + result.faces[0].celebrity[0].name);
+        console.log("celebrity prob : " + result.faces[0].celebrity[0].prob);
+        console.log("celebrity name : " + result.faces[0].celebrity[1].name);
+        console.log("celebrity prob : " + result.faces[0].celebrity[1].prob);
+        console.log('-----------------------End--------------------------------');
+    }).catch(function (err) {
+        // handle the error
+        console.log(err, err.stack);
+    });
 }
 var server = app.listen(8081, function () {
     var host = server.address().address

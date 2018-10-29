@@ -72,3 +72,9 @@
 //             recog();
 //         });
 //     } 
+
+// sightengine.check(['celebrities']).set_url('https://sightengine.com/assets/img/examples/example-craig-300.jpg').then(function(result) {
+//   // read the output (result)
+// }).catch(function(err) {
+//   // handle the error
+// });
