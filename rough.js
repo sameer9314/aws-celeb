@@ -51,3 +51,24 @@
 // var j = schedule.scheduleJob('42 * * * *', function(){
 //   console.log('The answer to life, the universe, and everything!');
 // });
+
+// Sceduler
+// var schedule = require('node-schedule');
+// var j = schedule.scheduleJob('1 * * * * *', function(){
+//     console.log('In scheduler');
+
+//      // Fire the getCleb event 
+//     eventEmitter.emit('getCleb');
+//     j.cancel();
+//     });
+
+
+// else {
+//     if (data.UnrecognizedFaces[0].Confidence != 0 && count < 2) {
+//         console.log(count);
+//         count++;
+//         rekognition.recognizeCelebrities(params, function (err, data) {
+//             console.log('Unrecognized Image, Calling Function Again');
+//             recog();
+//         });
+//     } 

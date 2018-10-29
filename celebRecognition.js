@@ -21,7 +21,7 @@ var params1 = {
       S3Object: {
         Bucket: 'sameer-sample-bucket',
         Name:   'scanner_20160902_193207.jpg'
-      }
+      } 
     }
   };
 
