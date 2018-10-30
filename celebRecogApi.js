@@ -1,3 +1,4 @@
+
 var express = require('express');
 var fs = require("fs");
 const fileUpload = require('express-fileupload');
@@ -81,7 +82,7 @@ app.post('/file_upload', function (req, res) {
 
     res.end('End.......');
 });
-//8888888888888888888888888888888888888888888888888888888888888888888
+
 
 function getCelebrityRecognition(imgName) {
     console.log("img name : " + imgName);
@@ -99,7 +100,7 @@ function getCelebrityRecognition(imgName) {
         console.log('in recog celeb function');
         if (err) { console.log(err, err.stack); } // an error occurred
         else {
-            if (data.UnrecognizedFaces[0].Confidence != 0) {
+            if (data.CelebrityFaces.length== 0) {
                 sightEngineApi(imgName);
             }
             else {
@@ -111,21 +112,18 @@ function getCelebrityRecognition(imgName) {
 }
 
 function sightEngineApi(imgName) {
-    var sightengine = require('sightengine')("4437087029135", "68VVA7mhbtZ8w7uYVwCU383190");
+    console.log('-------------In Sight Engine----------------');
 
-    sightengine.check(['celebrities']).set_file(imgName).then(function (result) {
-        // read the output (result)
+    var sightengine = require('sightengine')("1538590156", "LiKUMaTzuNe2XAXbk66E");
+
+    sightengine.check(['celebrities']).set_file(imgName).then(function(result) {
+  // read the output (result)
         console.log(result);
-        console.log("features   : " + result.faces[0].features);
-        console.log("celebrity name : " + result.faces[0].celebrity[0].name);
-        console.log("celebrity prob : " + result.faces[0].celebrity[0].prob);
-        console.log("celebrity name : " + result.faces[0].celebrity[1].name);
-        console.log("celebrity prob : " + result.faces[0].celebrity[1].prob);
-        console.log('-----------------------End--------------------------------');
-    }).catch(function (err) {
-        // handle the error
-        console.log(err, err.stack);
-    });
+    }).catch(function(err) {
+  // handle the error
+  console.log(err.stack);
+});
+
 }
 var server = app.listen(8081, function () {
     var host = server.address().address

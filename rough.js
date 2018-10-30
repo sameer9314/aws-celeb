@@ -78,3 +78,10 @@
 // }).catch(function(err) {
 //   // handle the error
 // });
+
+// console.log("features   : " + result.faces[0].features);
+//         console.log("celebrity name : " + result.faces[0].celebrity[0].name);
+//         console.log("celebrity prob : " + result.faces[0].celebrity[0].prob);
+//         console.log("celebrity name : " + result.faces[0].celebrity[1].name);
+//         console.log("celebrity prob : " + result.faces[0].celebrity[1].prob);
+//         console.log('-----------------------End--------------------------------');
