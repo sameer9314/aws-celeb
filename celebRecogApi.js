@@ -39,7 +39,6 @@ app.post('/file_upload', function (req, res) {
 
     var imgPath = uploadedFile.name;
 
-
     // listener #1
     var listner1 = function () {
         console.log('In listener 1')
@@ -52,7 +51,6 @@ app.post('/file_upload', function (req, res) {
                 console.log('Saving image to local database');
                 console.log('Image Saved In  : ' + imgPath);
             }
-
         });
     }
 
@@ -85,6 +83,7 @@ app.post('/file_upload', function (req, res) {
 
 
 function getCelebrityRecognition(imgName) {
+    console.log('--------------In Celebrity Recognition Api-------------- ')
     console.log("img name : " + imgName);
     const bitmap = fs.readFileSync(imgName);
 
@@ -100,8 +99,9 @@ function getCelebrityRecognition(imgName) {
         console.log('in recog celeb function');
         if (err) { console.log(err, err.stack); } // an error occurred
         else {
-            if (data.CelebrityFaces.length== 0) {
-                sightEngineApi(imgName);
+            if (data.CelebrityFaces.length == 0) {
+                //sightEngineApi(imgName);
+                detectFaces(imgName);
             }
             else {
                 console.log(data); // successful response
@@ -111,18 +111,92 @@ function getCelebrityRecognition(imgName) {
     });
 }
 
+// Detect Faces Api
+function detectFaces(imgName) {
+    console.log('--------------In Detect Faces Api-------------- ')
+    const bitmap1 = fs.readFileSync(imgName);
+    const buffer1 = new Buffer.from(bitmap1, 'base64');
+
+    var params = {
+        Image: { /* required */
+            Bytes: buffer1
+        },
+        Attributes: [
+            "ALL"
+        ]
+    };
+    rekognition.detectFaces(params, function (err, data) {
+        if (err) console.log(err, err.stack); // an error occurred
+        else {
+            // console.log(data);
+
+            console.log(data.FaceDetails[0].Gender.Value);
+            if (data.FaceDetails[0].Gender.Value == 'Male') {
+                compareFaces(imgName, 'Male');
+            } else {
+                compareFaces(imgName, 'Female');
+            }
+        } // successful response
+    });
+}
+function wait(){}
+// Compare Faces Api
+function compareFaces(sourceImage, gender) {
+    console.log('--------------In Compare Faces Api-------------- ');
+
+    const bitmap2 = fs.readFileSync(sourceImage);
+    const buffer2 = new Buffer.from(bitmap2, 'base64');
+
+    if (gender == 'Male') var bitmap3 = fs.readFileSync('maleImage.json');
+    if (gender == 'Female') var bitmap3 = fs.readFileSync('femaleImage.json');
+
+    let peoples = JSON.parse(bitmap3);
+
+    
+    for (var i = 0; i < peoples.length; i++){
+        console.log('"Peoples" : { name :'+ peoples[i].name);
+        console.log(peoples[i].path+' }')
+    }
+    for (var i = 0; i < peoples.length; i++) {
+        console.log('Loop Count is ' + i);
+        
+        const bitmap4 = fs.readFileSync(peoples[i].path);
+        setTimeout(wait,3000);
+        const buffer3 = new Buffer.from(bitmap4, 'base64');
+
+        var params = {
+            SourceImage: { /* required */
+                Bytes: buffer2
+            },
+            TargetImage: { /* required */
+                Bytes: buffer3
+            },
+            SimilarityThreshold: 0.0
+        };
+        rekognition.compareFaces(params, function (err, data) {
+            if (err) console.log(err, err.stack); // an error occurred
+            else {
+                console.log(data);
+                console.log('--------------------------End---------------------');
+            }           // successful response
+        });
+    }
+}
+
+
+//------------Sight Engine Api---------------
 function sightEngineApi(imgName) {
     console.log('-------------In Sight Engine----------------');
 
-    var sightengine = require('sightengine')("", "");
+    var sightengine = require('sightengine')("1538590156", "LiKUMaTzuNe2XAXbk66E");
 
-    sightengine.check(['celebrities']).set_file(imgName).then(function(result) {
-  // read the output (result)
+    sightengine.check(['celebrities']).set_file(imgName).then(function (result) {
+        // read the output (result)
         console.log(result);
-    }).catch(function(err) {
-  // handle the error
-  console.log(err.stack);
-});
+    }).catch(function (err) {
+        // handle the error
+        console.log(err.stack);
+    });
 
 }
 var server = app.listen(8081, function () {
