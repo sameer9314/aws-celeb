@@ -81,7 +81,6 @@ app.post('/file_upload', function (req, res) {
     res.end('End.......');
 });
 
-
 function getCelebrityRecognition(imgName) {
     console.log('--------------In Celebrity Recognition Api-------------- ')
     console.log("img name : " + imgName);
@@ -96,10 +95,11 @@ function getCelebrityRecognition(imgName) {
     }
 
     rekognition.recognizeCelebrities(params, function (err, data) {
-        console.log('in recog celeb function');
         if (err) { console.log(err, err.stack); } // an error occurred
         else {
             if (data.CelebrityFaces.length == 0) {
+                console.log('---------Celebrity Not Recognized..........');
+
                 //sightEngineApi(imgName);
                 detectFaces(imgName);
             }
@@ -128,7 +128,6 @@ function detectFaces(imgName) {
     rekognition.detectFaces(params, function (err, data) {
         if (err) console.log(err, err.stack); // an error occurred
         else {
-            // console.log(data);
 
             console.log(data.FaceDetails[0].Gender.Value);
             if (data.FaceDetails[0].Gender.Value == 'Male') {
@@ -139,7 +138,9 @@ function detectFaces(imgName) {
         } // successful response
     });
 }
-function wait(){}
+function wait(){
+    console.log('---------wait complete');
+}
 // Compare Faces Api
 function compareFaces(sourceImage, gender) {
     console.log('--------------In Compare Faces Api-------------- ');
@@ -152,47 +153,61 @@ function compareFaces(sourceImage, gender) {
 
     let peoples = JSON.parse(bitmap3);
 
-    
     for (var i = 0; i < peoples.length; i++){
         console.log('"Peoples" : { name :'+ peoples[i].name);
         console.log(peoples[i].path+' }')
     }
+    
     for (var i = 0; i < peoples.length; i++) {
         console.log('Loop Count is ' + i);
-        
+       
         const bitmap4 = fs.readFileSync(peoples[i].path);
-        setTimeout(wait,3000);
-        const buffer3 = new Buffer.from(bitmap4, 'base64');
-
-        var params = {
-            SourceImage: { /* required */
-                Bytes: buffer2
-            },
-            TargetImage: { /* required */
-                Bytes: buffer3
-            },
-            SimilarityThreshold: 0.0
-        };
-        rekognition.compareFaces(params, function (err, data) {
-            if (err) console.log(err, err.stack); // an error occurred
-            else {
-                console.log(data);
-                console.log('--------------------------End---------------------');
-            }           // successful response
-        });
+       
+        setTimeout(wait,3000); 
+       a(buffer2,bitmap4);
+       console.log('-------Loop End--------------');
     }
 }
 
-
+function a(buffer2,bitmap4){
+    console.log('---------In a------------');
+    var buffer3 = new Buffer.from(bitmap4, 'base64');
+    setTimeout(wait,3000);
+    var params = {
+        SourceImage: { /* required */
+            Bytes: buffer2
+        },
+        TargetImage: { /* required */
+            Bytes: buffer3
+        },
+        SimilarityThreshold: 0.0
+    };
+    console.log('********************************');
+    rekognition.compareFaces(params, function (err, data) {
+        console.log('&&&&&&&&&&&&&&&&&&&&&&&&&&&&&');
+        if (err) console.log(err, err.stack); // an error occurred
+        else {
+            console.log(data);
+            console.log('--------------------------End---------------------');
+        }           // successful response
+    });
+  
+}
 //------------Sight Engine Api---------------
 function sightEngineApi(imgName) {
     console.log('-------------In Sight Engine----------------');
 
-    var sightengine = require('sightengine')("", "");
+    var sightengine = require('sightengine')("443708702", "68VVA7mhbtZ8w7uYVwCU");
 
     sightengine.check(['celebrities']).set_file(imgName).then(function (result) {
         // read the output (result)
-        console.log(result);
+       
+        console.log("features   : " + result.faces[0].features);
+        console.log("celebrity name : " + result.faces[0].celebrity[0].name);
+        console.log("celebrity prob : " + result.faces[0].celebrity[0].prob);
+        console.log("celebrity name : " + result.faces[0].celebrity[1].name);
+        console.log("celebrity prob : " + result.faces[0].celebrity[1].prob);
+        console.log('-----------------------End--------------------------------');
     }).catch(function (err) {
         // handle the error
         console.log(err.stack);
