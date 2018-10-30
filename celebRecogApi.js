@@ -197,7 +197,7 @@ function a(buffer2,bitmap4){
 function sightEngineApi(imgName) {
     console.log('-------------In Sight Engine----------------');
 
-    var sightengine = require('sightengine')("443708702", "68VVA7mhbtZ8w7uYVwCU");
+    var sightengine = require('sightengine')("", "");
 
     sightengine.check(['celebrities']).set_file(imgName).then(function (result) {
         // read the output (result)
