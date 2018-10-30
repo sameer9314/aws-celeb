@@ -114,7 +114,7 @@ function getCelebrityRecognition(imgName) {
 function sightEngineApi(imgName) {
     console.log('-------------In Sight Engine----------------');
 
-    var sightengine = require('sightengine')("1538590156", "LiKUMaTzuNe2XAXbk66E");
+    var sightengine = require('sightengine')("", "");
 
     sightengine.check(['celebrities']).set_file(imgName).then(function(result) {
   // read the output (result)
